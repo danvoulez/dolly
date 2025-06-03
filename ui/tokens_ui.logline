@@ -1,0 +1,191 @@
+# tokens_ui.logline
+# Design tokens canônicos para identidade visual do FlipApp
+# Autor: Dan (LogLineOS)
+# Data: 2025-06-03
+
+- type: token
+  token: theme
+  values:
+    light:
+      color:
+        primary: "#1a8cff"
+        primary.light: "#e3f2fd"
+        primary.dark: "#0066cc"
+        surface: "#ffffff"
+        surface.alt: "#f8f9fa"
+        background: "#f0f4f8"
+        text: "#212121"
+        text.secondary: "#757575"
+        border: "#e0e0e0"
+        bot: "#f0f4c3"
+        user: "#e3f2fd"
+        alert: "#f44336"
+        success: "#4caf50"
+        warning: "#ff9800"
+        info: "#2196f3"
+      shadow:
+        base: "0 2px 5px rgba(0,0,0,0.08)"
+        elevated: "0 4px 10px rgba(0,0,0,0.12)"
+        focus: "0 0 0 2px rgba(26,140,255,0.4)"
+    dark:
+      color:
+        primary: "#4db8ff"
+        primary.light: "#1c313a"
+        primary.dark: "#007acc"
+        surface: "#1e1e1e"
+        surface.alt: "#252525"
+        background: "#121212"
+        text: "#ffffff"
+        text.secondary: "#aaaaaa"
+        border: "#333333"
+        bot: "#3a3c2e"
+        user: "#1c313a"
+        alert: "#f44336"
+        success: "#5cb860"
+        warning: "#ffb74d"
+        info: "#64b5f6"
+      shadow:
+        base: "0 2px 5px rgba(0,0,0,0.2)"
+        elevated: "0 4px 10px rgba(0,0,0,0.4)"
+        focus: "0 0 0 2px rgba(77,184,255,0.4)"
+    voulezvous:
+      color:
+        primary: "#9c27b0"
+        primary.light: "#f3e5f5"
+        primary.dark: "#6a0080"
+        surface: "#ffffff"
+        surface.alt: "#faf8fc"
+        background: "#f5f0f7"
+        text: "#37294d"
+        text.secondary: "#7e6b98"
+        border: "#e6dbef"
+        bot: "#ede7f6"
+        user: "#f3e5f5"
+        alert: "#e91e63"
+        success: "#66bb6a"
+        warning: "#ffab40"
+        info: "#7e57c2"
+      shadow:
+        base: "0 2px 5px rgba(156,39,176,0.1)"
+        elevated: "0 4px 10px rgba(156,39,176,0.2)"
+        focus: "0 0 0 2px rgba(156,39,176,0.3)"
+    cam4:
+      color:
+        primary: "#ff5722"
+        primary.light: "#ffccbc"
+        primary.dark: "#c41c00"
+        surface: "#121212"
+        surface.alt: "#1d1d1d"
+        background: "#0a0a0a"
+        text: "#ffffff"
+        text.secondary: "#b3b3b3"
+        border: "#2c2c2c"
+        bot: "#331400"
+        user: "#541f00"
+        alert: "#ff1744"
+        success: "#00e676"
+        warning: "#ffab00"
+        info: "#00b0ff"
+      shadow:
+        base: "0 2px 5px rgba(255,87,34,0.2)"
+        elevated: "0 4px 10px rgba(255,87,34,0.4)"
+        focus: "0 0 0 2px rgba(255,87,34,0.5)"
+
+- type: token
+  token: typography
+  values:
+    font:
+      family: "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif"
+      size:
+        xs: "0.75rem"
+        sm: "0.875rem"
+        md: "1rem"
+        lg: "1.25rem"
+        xl: "1.5rem"
+        xxl: "2rem"
+      weight:
+        regular: "400"
+        medium: "500"
+        bold: "700"
+      line:
+        tight: "1.2"
+        normal: "1.5"
+        loose: "1.8"
+
+- type: token
+  token: layout
+  values:
+    spacing:
+      xs: "0.25rem"
+      sm: "0.5rem"
+      md: "1rem"
+      lg: "1.5rem"
+      xl: "2rem"
+      xxl: "3rem"
+    radius:
+      xs: "2px"
+      sm: "4px"
+      md: "8px"
+      lg: "16px"
+      circle: "50%"
+    breakpoint:
+      sm: "640px"
+      md: "768px"
+      lg: "1024px"
+      xl: "1280px"
+    container:
+      padding: "1rem"
+      max-width: "1200px"
+
+- type: token
+  token: motion
+  values:
+    animation:
+      fade-in: "opacity 0.3s ease-in-out"
+      slide-in: "transform 0.3s ease-out"
+      scale: "transform 0.2s ease-in-out"
+      typing: "ellipsis 1.5s infinite"
+    transition:
+      fast: "0.15s ease"
+      normal: "0.3s ease"
+      slow: "0.5s ease"
+    keyframes:
+      pulse: [{ opacity: 0.6 }, { opacity: 1 }, { opacity: 0.6 }]
+      ellipsis: [{ width: 0 }, { width: "0.5em" }, { width: "1em" }, { width: "1.5em" }]
+      bounce: [{ transform: "translateY(0)" }, { transform: "translateY(-5px)" }, { transform: "translateY(0)" }]
+
+- type: token
+  token: feedback
+  values:
+    vibration:
+      short: "10ms"
+      medium: "50ms"
+      long: "100ms"
+      pattern: "10ms 30ms 10ms"
+    sound:
+      message: "/sounds/message.mp3"
+      notification: "/sounds/notification.mp3"
+      success: "/sounds/success.mp3"
+      error: "/sounds/error.mp3"
+
+- type: token
+  token: icons
+  values:
+    type:
+      register: "📝"
+      commit: "✅"
+      event: "🔔"
+      alert: "⚠️"
+      message: "💬"
+      log: "📋"
+      action: "⚡"
+      payment: "💰"
+      transfer: "🔄"
+      default: "📄"
+    category:
+      pessoal: "👤"
+      trabalho: "💼"
+      "conta corrente": "🏦"
+      estudos: "📚"
+      saude: "❤️"
+      default: "📁"

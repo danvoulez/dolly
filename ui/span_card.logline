@@ -1,0 +1,206 @@
+# span_card.logline
+# Componente visual canônico para exibição de spans
+# Autor: Dan (LogLineOS)
+# Data: 2025-06-03
+
+- type: container
+  class: "span-card"
+  token: 
+    background: "{{category ? 'color.surface' : 'color.surface.alt'}}"
+    border: "1px solid {{token('color.border')}}"
+    radius: "{{token('layout.radius.md')}}"
+    shadow: "{{token('shadow.base')}}"
+    padding: "{{token('layout.spacing.md')}}"
+    margin-bottom: "{{token('layout.spacing.sm')}}"
+    transition: "{{token('motion.transition.normal')}}"
+  animation: "{{token('motion.animation.fade-in')}}"
+  bind: "expanded | expandContract"
+  on: "click: toggleExpand(span_id={{item.span_id || 'null'}})"
+  children:
+    # Cabeçalho do span com ícone de tipo, categoria e timestamp
+    - type: container
+      class: "span-card-header"
+      token:
+        display: "flex"
+        justify-content: "space-between"
+        align-items: "center"
+        margin-bottom: "{{expanded ? token('layout.spacing.sm') : '0'}}"
+      children:
+        # Ícone e tipo
+        - type: container
+          token:
+            display: "flex"
+            align-items: "center"
+          children:
+            - type: container
+              class: "span-type-icon"
+              token:
+                font-size: "{{token('typography.font.size.lg')}}"
+                margin-right: "{{token('layout.spacing.sm')}}"
+              content: "{{getIconForType(item.type)}}"
+            - type: text
+              class: "span-type"
+              token:
+                font-weight: "{{token('typography.font.weight.medium')}}"
+                color: "{{token('color.text')}}"
+                margin-right: "{{token('layout.spacing.md')}}"
+              content: "{{item.type || 'span'}}"
+            # Badge de categoria se existir
+            - type: when
+              when: "item.category"
+              children:
+                - type: container
+                  class: "span-category-badge"
+                  token:
+                    display: "inline-flex"
+                    align-items: "center"
+                    background: "{{getCategoryColor(item.category)}}"
+                    padding: "{{token('layout.spacing.xs')}} {{token('layout.spacing.sm')}}"
+                    border-radius: "{{token('layout.radius.sm')}}"
+                    font-size: "{{token('typography.font.size.xs')}}"
+                  children:
+                    - type: container
+                      token:
+                        margin-right: "{{token('layout.spacing.xs')}}"
+                      content: "{{getCategoryIcon(item.category)}}"
+                    - type: text
+                      token:
+                        color: "{{token('color.text')}}"
+                      content: "{{item.category}}"
+        # Timestamp
+        - type: text
+          class: "span-timestamp"
+          token:
+            font-size: "{{token('typography.font.size.xs')}}"
+            color: "{{token('color.text.secondary')}}"
+          content: "{{formatTimestamp(item.timestamp)}}"
+
+    # Conteúdo principal (sempre visível)
+    - type: container
+      class: "span-content-preview"
+      token:
+        margin-top: "{{token('layout.spacing.sm')}}"
+        overflow: "hidden"
+        text-overflow: "ellipsis"
+        white-space: "{{expanded ? 'normal' : 'nowrap'}}"
+      children:
+        - type: text
+          class: "span-content"
+          token:
+            font-size: "{{token('typography.font.size.sm')}}"
+            color: "{{token('color.text')}}"
+            line-height: "{{token('typography.line.normal')}}"
+          content: "{{item.content || 'Sem conteúdo'}}"
+
+    # Detalhes expandidos (visíveis apenas quando expandido)
+    - type: when
+      when: "expanded"
+      children:
+        - type: container
+          class: "span-details"
+          token:
+            margin-top: "{{token('layout.spacing.md')}}"
+            padding-top: "{{token('layout.spacing.sm')}}"
+            border-top: "1px solid {{token('color.border')}}"
+          children:
+            # ID do span
+            - type: container
+              class: "span-detail-row"
+              token:
+                display: "flex"
+                margin-bottom: "{{token('layout.spacing.xs')}}"
+                font-size: "{{token('typography.font.size.xs')}}"
+              children:
+                - type: text
+                  token:
+                    font-weight: "{{token('typography.font.weight.medium')}}"
+                    color: "{{token('color.text.secondary')}}"
+                    margin-right: "{{token('layout.spacing.sm')}}"
+                  content: "ID:"
+                - type: text
+                  class: "span-id"
+                  token:
+                    color: "{{token('color.text.secondary')}}"
+                    font-family: "monospace"
+                  content: "{{item.span_id || 'undefined'}}"
+
+            # Efeitos (se houver)
+            - type: when
+              when: "item.effects && item.effects.length > 0"
+              children:
+                - type: container
+                  class: "span-effects"
+                  token:
+                    margin-top: "{{token('layout.spacing.sm')}}"
+                  children:
+                    - type: text
+                      token:
+                        font-size: "{{token('typography.font.size.xs')}}"
+                        font-weight: "{{token('typography.font.weight.medium')}}"
+                        color: "{{token('color.text.secondary')}}"
+                        margin-bottom: "{{token('layout.spacing.xs')}}"
+                      content: "Efeitos:"
+                    - type: loop
+                      data: "item.effects"
+                      children:
+                        - type: container
+                          class: "span-effect-item"
+                          token:
+                            display: "flex"
+                            align-items: "center"
+                            font-size: "{{token('typography.font.size.xs')}}"
+                            padding: "{{token('layout.spacing.xs')}}"
+                            margin-bottom: "{{token('layout.spacing.xs')}}"
+                            background: "{{token('color.surface.alt')}}"
+                            border-radius: "{{token('layout.radius.xs')}}"
+                          children:
+                            - type: text
+                              token:
+                                color: "{{token('color.info')}}"
+                              content: "→ "
+                            - type: text
+                              content: "{{item.type}}: {{item.target || 'sistema'}}"
+
+# Funções auxiliares para o componente
+- type: function
+  name: getIconForType
+  code: |
+    function(type) {
+      if (!type) return token('icons.type.default');
+      return token('icons.type.' + type.toLowerCase()) || token('icons.type.default');
+    }
+
+- type: function
+  name: getCategoryIcon
+  code: |
+    function(category) {
+      if (!category) return token('icons.category.default');
+      return token('icons.category.' + category.toLowerCase()) || token('icons.category.default');
+    }
+
+- type: function
+  name: getCategoryColor
+  code: |
+    function(category) {
+      const colorMap = {
+        'pessoal': 'color.primary.light',
+        'trabalho': 'color.success',
+        'conta corrente': 'color.info',
+        'estudos': 'color.warning'
+      };
+      const baseColor = colorMap[category.toLowerCase()] || 'color.surface.alt';
+      return `${token(baseColor)}40`; // Adiciona transparência
+    }
+
+- type: function
+  name: formatTimestamp
+  code: |
+    function(timestamp) {
+      if (!timestamp) return '';
+      try {
+        const date = new Date(timestamp);
+        return date.toLocaleString();
+      } catch (e) {
+        return timestamp;
+      }
+    }

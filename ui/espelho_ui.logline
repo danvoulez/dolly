@@ -1,0 +1,463 @@
+# espelho_ui.logline
+# Interface lateral para exibição de spans do LogLine
+# Autor: Dan (LogLineOS)
+# Data: 2025-06-03
+
+- type: container
+  class: "espelho-panel"
+  token:
+    display: "flex"
+    flex-direction: "column"
+    height: "100%"
+    background: "{{token('color.surface')}}"
+    border-right: "1px solid {{token('color.border')}}"
+  children:
+    # Cabeçalho com título e status de conexão
+    - type: container
+      class: "espelho-header"
+      token:
+        padding: "{{token('layout.spacing.md')}}"
+        border-bottom: "1px solid {{token('color.border')}}"
+        display: "flex"
+        justify-content: "space-between"
+        align-items: "center"
+      children:
+        # Título
+        - type: text
+          class: "espelho-title"
+          token:
+            font-size: "{{token('typography.font.size.lg')}}"
+            font-weight: "{{token('typography.font.weight.bold')}}"
+            color: "{{token('color.text')}}"
+          content: "🪞 Espelho"
+        
+        # Indicador de status de conexão
+        - type: container
+          class: "connection-status"
+          token:
+            display: "flex"
+            align-items: "center"
+          children:
+            - type: container
+              class: "status-indicator"
+              token:
+                width: "8px"
+                height: "8px"
+                border-radius: "{{token('layout.radius.circle')}}"
+                background: "{{connection['espelho'] && connection['espelho'].status === 'connected' ? token('color.success') : token('color.alert')}}"
+                margin-right: "{{token('layout.spacing.xs')}}"
+            - type: text
+              class: "status-text"
+              token:
+                font-size: "{{token('typography.font.size.xs')}}"
+                color: "{{token('color.text.secondary')}}"
+              content: "{{connection['espelho'] && connection['espelho'].status === 'connected' ? 'Online' : 'Offline'}}"
+    
+    # Filtros
+    - type: container
+      class: "espelho-filters"
+      token:
+        padding: "{{token('layout.spacing.md')}}"
+        border-bottom: "1px solid {{token('color.border')}}"
+        background: "{{token('color.surface.alt')}}"
+      children:
+        # Campo de busca
+        - type: container
+          class: "search-container"
+          token:
+            margin-bottom: "{{token('layout.spacing.sm')}}"
+            position: "relative"
+          children:
+            - type: input
+              class: "search-input"
+              placeholder: "Buscar em spans..."
+              bind: "espelho.filters.search | updateFilters"
+              token:
+                width: "100%"
+                padding: "{{token('layout.spacing.sm')}}"
+                padding-left: "{{token('layout.spacing.xl')}}"
+                border: "1px solid {{token('color.border')}}"
+                border-radius: "{{token('layout.radius.sm')}}"
+                font-size: "{{token('typography.font.size.sm')}}"
+                background: "{{token('color.surface')}}"
+                color: "{{token('color.text')}}"
+            - type: container
+              class: "search-icon"
+              content: "🔍"
+              token:
+                position: "absolute"
+                left: "{{token('layout.spacing.sm')}}"
+                top: "50%"
+                transform: "translateY(-50%)"
+                font-size: "{{token('typography.font.size.sm')}}"
+                color: "{{token('color.text.secondary')}}"
+        
+        # Filtros de tipo e categoria
+        - type: container
+          class: "filter-section"
+          token:
+            display: "flex"
+            flex-direction: "column"
+            gap: "{{token('layout.spacing.sm')}}"
+          children:
+            # Filtros de tipo
+            - type: container
+              class: "filter-row"
+              token:
+                display: "flex"
+                flex-wrap: "wrap"
+                gap: "{{token('layout.spacing.xs')}}"
+                margin-bottom: "{{token('layout.spacing.xs')}}"
+              children:
+                - type: text
+                  class: "filter-label"
+                  token:
+                    font-size: "{{token('typography.font.size.xs')}}"
+                    font-weight: "{{token('typography.font.weight.medium')}}"
+                    color: "{{token('color.text.secondary')}}"
+                    margin-right: "{{token('layout.spacing.xs')}}"
+                    flex-basis: "100%"
+                  content: "Filtrar por tipo:"
+                
+                # Botões de filtro de tipo dinâmicos
+                - type: loop
+                  data: "getAvailableTypes()"
+                  children:
+                    - type: container
+                      class: "filter-type-button {{isTypeSelected(item) ? 'selected' : ''}}"
+                      on: "click: toggleTypeFilter(type={{item}})"
+                      token:
+                        padding: "{{token('layout.spacing.xs')}} {{token('layout.spacing.sm')}}"
+                        border-radius: "{{token('layout.radius.sm')}}"
+                        font-size: "{{token('typography.font.size.xs')}}"
+                        cursor: "pointer"
+                        background: "{{isTypeSelected(item) ? token('color.primary.light') : token('color.surface')}}"
+                        border: "1px solid {{isTypeSelected(item) ? token('color.primary') : token('color.border')}}"
+                        color: "{{isTypeSelected(item) ? token('color.primary.dark') : token('color.text')}}"
+                        display: "flex"
+                        align-items: "center"
+                        gap: "{{token('layout.spacing.xs')}}"
+                        transition: "{{token('motion.transition.fast')}}"
+                      children:
+                        - type: container
+                          content: "{{getIconForType(item)}}"
+                        - type: text
+                          content: "{{item}}"
+            
+            # Filtros de categoria
+            - type: container
+              class: "filter-row"
+              token:
+                display: "flex"
+                flex-wrap: "wrap"
+                gap: "{{token('layout.spacing.xs')}}"
+              children:
+                - type: text
+                  class: "filter-label"
+                  token:
+                    font-size: "{{token('typography.font.size.xs')}}"
+                    font-weight: "{{token('typography.font.weight.medium')}}"
+                    color: "{{token('color.text.secondary')}}"
+                    margin-right: "{{token('layout.spacing.xs')}}"
+                    flex-basis: "100%"
+                  content: "Filtrar por categoria:"
+                
+                # Botões de filtro de categoria dinâmicos
+                - type: loop
+                  data: "getAvailableCategories()"
+                  children:
+                    - type: container
+                      class: "filter-category-button {{isCategorySelected(item) ? 'selected' : ''}}"
+                      on: "click: toggleCategoryFilter(category={{item}})"
+                      token:
+                        padding: "{{token('layout.spacing.xs')}} {{token('layout.spacing.sm')}}"
+                        border-radius: "{{token('layout.radius.sm')}}"
+                        font-size: "{{token('typography.font.size.xs')}}"
+                        cursor: "pointer"
+                        background: "{{isCategorySelected(item) ? getCategoryColor(item) : token('color.surface')}}"
+                        border: "1px solid {{isCategorySelected(item) ? getCategoryColorBorder(item) : token('color.border')}}"
+                        color: "{{token('color.text')}}"
+                        display: "flex"
+                        align-items: "center"
+                        gap: "{{token('layout.spacing.xs')}}"
+                        transition: "{{token('motion.transition.fast')}}"
+                      children:
+                        - type: container
+                          content: "{{getCategoryIcon(item)}}"
+                        - type: text
+                          content: "{{item}}"
+
+    # Área principal com spans filtrados
+    - type: container
+      class: "espelho-content"
+      token:
+        flex: "1"
+        overflow-y: "auto"
+        padding: "{{token('layout.spacing.md')}}"
+      children:
+        # Estado vazio quando não há spans
+        - type: when
+          when: "!hasFilteredSpans()"
+          children:
+            - type: container
+              class: "empty-state"
+              token:
+                display: "flex"
+                flex-direction: "column"
+                align-items: "center"
+                justify-content: "center"
+                padding: "{{token('layout.spacing.xl')}}"
+                text-align: "center"
+              children:
+                - type: container
+                  class: "empty-icon"
+                  content: "🔍"
+                  token:
+                    font-size: "{{token('typography.font.size.xxl')}}"
+                    margin-bottom: "{{token('layout.spacing.md')}}"
+                    opacity: "0.5"
+                - type: text
+                  class: "empty-title"
+                  token:
+                    font-size: "{{token('typography.font.size.md')}}"
+                    font-weight: "{{token('typography.font.weight.medium')}}"
+                    color: "{{token('color.text')}}"
+                    margin-bottom: "{{token('layout.spacing.sm')}}"
+                  content: "{{isFiltering() ? 'Nenhum span corresponde aos filtros' : 'Nenhum span disponível'}}"
+                - type: text
+                  class: "empty-subtitle"
+                  token:
+                    font-size: "{{token('typography.font.size.sm')}}"
+                    color: "{{token('color.text.secondary')}}"
+                  content: "{{isFiltering() ? 'Tente alterar seus filtros' : connection['espelho'] && connection['espelho'].status !== 'connected' ? 'Verifique sua conexão' : 'Aguardando novos dados'}}"
+                - type: when
+                  when: "isFiltering()"
+                  children:
+                    - type: container
+                      class: "reset-filters-button"
+                      on: "click: resetFilters"
+                      token:
+                        margin-top: "{{token('layout.spacing.md')}}"
+                        padding: "{{token('layout.spacing.sm')}} {{token('layout.spacing.md')}}"
+                        background: "{{token('color.primary')}}"
+                        color: "white"
+                        border-radius: "{{token('layout.radius.sm')}}"
+                        cursor: "pointer"
+                        font-size: "{{token('typography.font.size.sm')}}"
+                      children:
+                        - type: text
+                          content: "Limpar filtros"
+        
+        # Loop para exibir spans filtrados
+        - type: when
+          when: "hasFilteredSpans()"
+          children:
+            - type: loop
+              data: "getFilteredSpans()"
+              children:
+                - type: include
+                  source: "span_card.logline"
+                  props:
+                    item: "{{item}}"
+                    expanded: "{{isSpanExpanded(item.span_id)}}"
+
+# Funções auxiliares para espelho_ui
+- type: function
+  name: getAvailableTypes
+  code: |
+    function() {
+      const spans = stateManager.getState('espelho.spans') || [];
+      const types = new Set();
+      spans.forEach(span => {
+        if (span.type) types.add(span.type);
+      });
+      return Array.from(types);
+    }
+
+- type: function
+  name: getAvailableCategories
+  code: |
+    function() {
+      const spans = stateManager.getState('espelho.spans') || [];
+      const categories = new Set();
+      spans.forEach(span => {
+        if (span.category) categories.add(span.category);
+      });
+      return Array.from(categories);
+    }
+
+- type: function
+  name: getFilteredSpans
+  code: |
+    function() {
+      const spans = stateManager.getState('espelho.spans') || [];
+      const filters = stateManager.getState('espelho.filters') || {};
+      
+      // Aplicar filtro de busca
+      let filtered = spans;
+      
+      if (filters.search) {
+        const searchLower = filters.search.toLowerCase();
+        filtered = filtered.filter(span => 
+          (span.content && span.content.toLowerCase().includes(searchLower)) ||
+          (span.type && span.type.toLowerCase().includes(searchLower)) ||
+          (span.category && span.category.toLowerCase().includes(searchLower))
+        );
+      }
+      
+      // Aplicar filtros de tipo
+      if (filters.types && filters.types.length > 0) {
+        filtered = filtered.filter(span => 
+          span.type && filters.types.includes(span.type)
+        );
+      }
+      
+      // Aplicar filtros de categoria
+      if (filters.categories && filters.categories.length > 0) {
+        filtered = filtered.filter(span => 
+          span.category && filters.categories.includes(span.category)
+        );
+      }
+      
+      // Ordenar por timestamp decrescente
+      return filtered.sort((a, b) => {
+        const dateA = a.timestamp ? new Date(a.timestamp).getTime() : 0;
+        const dateB = b.timestamp ? new Date(b.timestamp).getTime() : 0;
+        return dateB - dateA;
+      });
+    }
+
+- type: function
+  name: isTypeSelected
+  code: |
+    function(type) {
+      const filters = stateManager.getState('espelho.filters') || {};
+      return filters.types && filters.types.includes(type);
+    }
+
+- type: function
+  name: isCategorySelected
+  code: |
+    function(category) {
+      const filters = stateManager.getState('espelho.filters') || {};
+      return filters.categories && filters.categories.includes(category);
+    }
+
+- type: function
+  name: toggleTypeFilter
+  code: |
+    function(type) {
+      const filters = stateManager.getState('espelho.filters') || {};
+      const types = filters.types || [];
+      
+      const index = types.indexOf(type);
+      if (index === -1) {
+        // Adiciona o tipo
+        stateManager.setState('espelho.filters.types', [...types, type]);
+        feedback.vibration(token('feedback.vibration.short'));
+      } else {
+        // Remove o tipo
+        const newTypes = [...types];
+        newTypes.splice(index, 1);
+        stateManager.setState('espelho.filters.types', newTypes);
+      }
+    }
+
+- type: function
+  name: toggleCategoryFilter
+  code: |
+    function(category) {
+      const filters = stateManager.getState('espelho.filters') || {};
+      const categories = filters.categories || [];
+      
+      const index = categories.indexOf(category);
+      if (index === -1) {
+        // Adiciona a categoria
+        stateManager.setState('espelho.filters.categories', [...categories, category]);
+        feedback.vibration(token('feedback.vibration.short'));
+      } else {
+        // Remove a categoria
+        const newCategories = [...categories];
+        newCategories.splice(index, 1);
+        stateManager.setState('espelho.filters.categories', newCategories);
+      }
+    }
+
+- type: function
+  name: resetFilters
+  code: |
+    function() {
+      stateManager.setState('espelho.filters', {});
+      feedback.vibration(token('feedback.vibration.medium'));
+    }
+
+- type: function
+  name: hasFilteredSpans
+  code: |
+    function() {
+      return getFilteredSpans().length > 0;
+    }
+
+- type: function
+  name: isFiltering
+  code: |
+    function() {
+      const filters = stateManager.getState('espelho.filters') || {};
+      return !!(filters.search || (filters.types && filters.types.length) || (filters.categories && filters.categories.length));
+    }
+
+- type: function
+  name: isSpanExpanded
+  code: |
+    function(spanId) {
+      const expandedSpans = stateManager.getState('espelho.expandedSpans') || {};
+      return !!expandedSpans[spanId];
+    }
+
+- type: function
+  name: toggleExpand
+  code: |
+    function(spanId) {
+      if (!spanId) return;
+      
+      const expandedSpans = stateManager.getState('espelho.expandedSpans') || {};
+      const isExpanded = !!expandedSpans[spanId];
+      
+      stateManager.setState(`espelho.expandedSpans.${spanId}`, !isExpanded);
+      feedback.vibration(token('feedback.vibration.short'));
+      
+      if (!isExpanded) {
+        // Play animation or sound when expanding
+        feedback.sound(token('feedback.sound.message'));
+      }
+    }
+
+- type: function
+  name: updateFilters
+  code: |
+    function() {
+      // Debounce para atualizações de filtro de busca
+      if (this._searchTimeout) {
+        clearTimeout(this._searchTimeout);
+      }
+      
+      this._searchTimeout = setTimeout(() => {
+        const searchValue = stateManager.getState('espelho.filters.search');
+        if (searchValue && searchValue.trim().length > 0) {
+          feedback.vibration(token('feedback.vibration.short'));
+        }
+      }, 300);
+    }
+
+- type: function
+  name: getCategoryColorBorder
+  code: |
+    function(category) {
+      const colorMap = {
+        'pessoal': 'color.primary',
+        'trabalho': 'color.success',
+        'conta corrente': 'color.info',
+        'estudos': 'color.warning'
+      };
+      return token(colorMap[category.toLowerCase()] || 'color.border');
+    }
