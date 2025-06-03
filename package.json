@@ -22,7 +22,7 @@
     "clean": "rimraf dist/ public/wasm/"
   },
   "dependencies": {
-    "dompurify": "3.0.6",
+    "dompurify": "3.2.4",
     "markdown-it": "13.0.1"
   },
   "devDependencies": {
