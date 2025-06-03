@@ -1,0 +1,25 @@
+# ui/components/chat-message.logline
+# Componente para mensagens de chat com diferentes estilos para usuário e bot
+- type: container
+  class: "message {{props.sender === 'user' ? 'message-user' : 'message-bot'}} {{props.className || ''}}"
+  style: "display:flex; margin:0.5rem 0; {{props.sender === 'user' ? 'flex-direction:row-reverse' : 'flex-direction:row'}}; {{props.style}}"
+  children:
+    - type: container
+      class: "message-avatar"
+      style: "width:32px; height:32px; flex-shrink:0; border-radius:50%; margin:0 0.5rem; background:{{props.sender === 'user' ? '#e3f2fd' : '#f0f4c3'}}; display:flex; align-items:center; justify-content:center"
+      children:
+        - type: text
+          content: "{{props.sender === 'user' ? '👤' : '🤖'}}"
+    - type: container
+      class: "message-bubble"
+      style: "padding:0.75rem; border-radius:8px; max-width:80%; background:{{props.sender === 'user' ? '#e3f2fd' : '#f0f4c3'}}; {{props.sender === 'user' ? 'margin-right:0.5rem' : 'margin-left:0.5rem'}}"
+      children:
+        - type: markdown
+          content: "{{props.content || ''}}"
+          style: "margin:0"
+    - type: container
+      class: "message-time"
+      style: "font-size:0.7rem; color:#999; align-self:flex-end; margin-bottom:0.25rem; {{props.sender === 'user' ? 'margin-right:0.25rem' : 'margin-left:0.25rem'}}"
+      children:
+        - type: text
+          content: "{{props.timestamp ? (new Date(props.timestamp)).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) : ''}}"

@@ -1,0 +1,296 @@
+/* public/styles/main.css (continuação) */
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.5rem 1rem;
+  border-radius: var(--border-radius);
+  font-weight: 500;
+  text-align: center;
+  cursor: pointer;
+  transition: background-color var(--transition-fast), transform var(--transition-fast);
+  border: none;
+  background-color: #e0e0e0;
+  color: var(--text-primary);
+}
+
+.btn:hover {
+  background-color: #d0d0d0;
+}
+
+.btn:active {
+  transform: translateY(1px);
+}
+
+.btn-primary {
+  background-color: var(--primary);
+  color: white;
+}
+
+.btn-primary:hover {
+  background-color: var(--primary-dark);
+}
+
+.btn-secondary {
+  background-color: var(--secondary);
+  color: white;
+}
+
+.btn-danger {
+  background-color: var(--error);
+  color: white;
+}
+
+.btn-disabled, .btn[disabled] {
+  opacity: 0.6;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+.btn-loading {
+  position: relative;
+  color: transparent;
+}
+
+/* Cartões */
+.card {
+  background-color: var(--surface);
+  border-radius: var(--border-radius-lg);
+  box-shadow: var(--shadow-sm);
+  overflow: hidden;
+  transition: box-shadow var(--transition-medium);
+}
+
+.card:hover {
+  box-shadow: var(--shadow-md);
+}
+
+/* Formulários */
+input, textarea, select {
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid var(--border);
+  border-radius: var(--border-radius);
+  background-color: var(--surface);
+  transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+input:focus, textarea:focus, select:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 2px var(--primary-light);
+}
+
+label {
+  display: block;
+  margin-bottom: var(--spacing-xs);
+  color: var(--text-secondary);
+}
+
+/* Tabs */
+.tabs {
+  display: flex;
+  border-bottom: 1px solid var(--border);
+}
+
+.tab-item {
+  padding: var(--spacing-md) var(--spacing-lg);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.tab-item:hover {
+  background-color: rgba(0, 0, 0, 0.05);
+}
+
+.tab-item.active {
+  border-bottom: 2px solid var(--primary);
+  color: var(--primary);
+  font-weight: 500;
+}
+
+/* Badges */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.25rem 0.5rem;
+  border-radius: 16px;
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+}
+
+/* Loaders */
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+}
+
+.loading-spinner {
+  width: 40px;
+  height: 40px;
+  border: 3px solid rgba(0, 0, 0, 0.1);
+  border-radius: 50%;
+  border-top-color: var(--primary);
+  animation: spin 1s linear infinite;
+  margin-bottom: var(--spacing-md);
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* Typing indicator */
+.typing-indicator {
+  display: inline-flex;
+  align-items: center;
+}
+
+.typing-indicator::after {
+  content: '...';
+  width: 1.5em;
+  overflow: hidden;
+  animation: ellipsis 1.5s infinite;
+}
+
+@keyframes ellipsis {
+  0% { width: 0; }
+  33% { width: 0.5em; }
+  66% { width: 1em; }
+  100% { width: 1.5em; }
+}
+
+/* Chat styles */
+.message-bubble {
+  position: relative;
+  max-width: 80%;
+}
+
+.message-user .message-bubble {
+  background-color: var(--primary-light);
+  margin-left: auto;
+}
+
+.message-bot .message-bubble {
+  background-color: var(--surface);
+}
+
+.chat-history-container {
+  max-height: 400px;
+  overflow-y: auto;
+  padding: var(--spacing-md);
+  background-color: #f9f9f9;
+}
+
+/* Notificações */
+.error-notification, .app-update-notification {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background-color: white;
+  padding: var(--spacing-md);
+  border-radius: var(--border-radius);
+  box-shadow: var(--shadow-md);
+  z-index: 1000;
+  animation: slide-up 0.3s ease;
+}
+
+.error-notification {
+  background-color: var(--error);
+  color: white;
+}
+
+.app-update-notification {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--spacing-md);
+}
+
+@keyframes slide-up {
+  from { transform: translateY(100%); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+.offline-banner {
+  background-color: var(--warning);
+  color: white;
+  text-align: center;
+  padding: var(--spacing-sm);
+}
+
+.offline-banner.hidden {
+  display: none;
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+  .tabs {
+    overflow-x: auto;
+    white-space: nowrap;
+  }
+  
+  .chat-input {
+    flex-direction: column;
+  }
+}
+
+/* Acessibilidade - preferência por movimento reduzido */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* High contrast mode */
+@media (prefers-contrast: high) {
+  :root {
+    --primary: #0000ff;
+    --secondary: #008000;
+    --error: #ff0000;
+    --warning: #cc6600;
+    --background: #ffffff;
+    --text-primary: #000000;
+    --border: #000000;
+  }
+}
+
+/* Dark mode */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --primary: #4db8ff;
+    --primary-dark: #007acc;
+    --primary-light: #1c313a;
+    --background: #121212;
+    --surface: #1e1e1e;
+    --text-primary: #ffffff;
+    --text-secondary: #aaaaaa;
+    --border: #333333;
+  }
+  
+  .card {
+    background-color: #252525;
+  }
+  
+  input, textarea, select {
+    background-color: #333333;
+    color: var(--text-primary);
+    border-color: #444444;
+  }
+  
+  .message-bot .message-bubble {
+    background-color: #252525;
+  }
+  
+  .message-user .message-bubble {
+    background-color: #1c313a;
+  }
+  
+  .offline-banner {
+    background-color: #664400;
+  }
+}

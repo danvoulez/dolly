@@ -1,0 +1,21 @@
+# ui/components/button.logline
+# Componente Button avançado com estados
+- type: button
+  class: "btn {{props.variant ? 'btn-' + props.variant : ''}} {{props.className || ''}} {{props.loading ? 'btn-loading' : ''}} {{props.disabled ? 'btn-disabled' : ''}}"
+  style: "position:relative; padding:0.5rem 1rem; border:none; border-radius:4px; font-size:1rem; cursor:pointer; transition:background 0.2s ease; {{props.style}}"
+  disabled: "{{props.disabled || props.loading || false}}"
+  content: "{{props.loading ? '' : props.label || props.content || ''}}"
+  on: "click: {{props.loading || props.disabled ? 'noop' : (props.onClick || 'noop')}}"
+  children:
+    - type: when
+      when: "props.loading"
+      children:
+        - type: container
+          class: "loader"
+          style: "display:inline-block; width:16px; height:16px; border:2px solid rgba(255,255,255,0.3); border-radius:50%; border-top-color:white; animation:spin 1s linear infinite"
+    - type: when
+      when: "props.icon && !props.loading"
+      children:
+        - type: container
+          style: "margin-right:0.5rem"
+          content: "{{props.icon}}"

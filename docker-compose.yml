@@ -1,0 +1,73 @@
+version: '3.8'
+
+services:
+  # Frontend FlipApp
+  flipapp:
+    build: .
+    container_name: flipapp-frontend
+    ports:
+      - "80:80"
+    environment:
+      - API_BASE_URL=http://api:8000/api
+      - WHATSAPP_WS_URL=ws://ws-server:3001/ws/messages
+      - ESPELHO_WS_URL=ws://ws-server:8080/ws/espelho
+      - LLM_API_URL=http://llm-proxy:8000/api/llm
+      - NODE_ENV=production
+    depends_on:
+      - api
+      - ws-server
+      - llm-proxy
+  
+  # API Server
+  api:
+    build: ./examples/api-server
+    container_name: flipapp-api
+    ports:
+      - "8000:8000"
+    environment:
+      - DATABASE_URL=postgresql://postgres:postgres@db:5432/flipapp
+    depends_on:
+      - db
+  
+  # WebSocket Server
+  ws-server:
+    build: ./examples/ws-server
+    container_name: flipapp-ws
+    ports:
+      - "3001:3001"
+      - "8080:8080"
+    environment:
+      - API_URL=http://api:8000/api
+  
+  # LLM Proxy
+  llm-proxy:
+    build: ./examples/llm-proxy
+    container_name: flipapp-llm
+    environment:
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - DEFAULT_MODEL=gpt-4-turbo
+  
+  # Database
+  db:
+    image: postgres:15-alpine
+    container_name: flipapp-db
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=flipapp
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+  
+  # Opcional: Servidor de demonstração com dados simulados
+  demo-data:
+    build: ./examples/demo-data
+    container_name: flipapp-demo
+    ports:
+      - "8001:8001"
+    environment:
+      - WS_SERVER_URL=ws://ws-server:8080
+
+volumes:
+  postgres_data:

@@ -1,0 +1,55 @@
+{
+  "name": "flipapp",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Plataforma conversacional com UI declarativa LogLine e WebAssembly",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage",
+    "test:e2e": "playwright test",
+    "lint": "eslint src --ext .js",
+    "format": "prettier --write 'src/**/*.js'",
+    "build:wasm": "cd rust_vm && wasm-pack build --target web",
+    "build:wasm:release": "cd rust_vm && wasm-pack build --target web --release",
+    "validate:logline": "node scripts/validate-logline.js ui/",
+    "docker:build": "docker build -t flipapp .",
+    "docker:run": "docker run -p 80:80 flipapp",
+    "docker:compose": "docker-compose up",
+    "clean": "rimraf dist/ public/wasm/"
+  },
+  "dependencies": {
+    "dompurify": "3.0.6",
+    "markdown-it": "13.0.1"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.23.0",
+    "@babel/preset-env": "^7.22.20",
+    "@playwright/test": "^1.38.1",
+    "babel-jest": "^29.7.0",
+    "cross-env": "^7.0.3",
+    "dotenv": "^16.3.1",
+    "eslint": "^8.51.0",
+    "eslint-config-prettier": "^9.0.0",
+    "eslint-plugin-jest": "^27.4.2",
+    "identity-obj-proxy": "^3.0.0",
+    "jest": "^29.7.0",
+    "jest-environment-jsdom": "^29.7.0",
+    "jest-watch-typeahead": "^2.2.2",
+    "prettier": "^3.0.3",
+    "rimraf": "^5.0.5",
+    "vite": "^4.4.11"
+  },
+  "browserslist": [
+    ">0.2%",
+    "not dead",
+    "not op_mini all",
+    "ie >= 11"
+  ],
+  "engines": {
+    "node": ">=16.0.0"
+  }
+}

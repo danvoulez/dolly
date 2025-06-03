@@ -1,0 +1,83 @@
+# ui/chat_ui.logline
+# UI da aba de chat
+- type: container
+  style: "display:flex; flex-direction:column; height:100%; max-width:800px; margin:0 auto"
+  children:
+    - type: container
+      class: "chat-header"
+      style: "padding:1rem; border-bottom:1px solid #eee; display:flex; justify-content:space-between; align-items:center"
+      children:
+        - type: text
+          content: "💬 Chat"
+          style: "font-size:1.2rem; font-weight:bold; margin:0"
+        - type: container
+          style: "display:flex; align-items:center"
+          children:
+            - type: when
+              when: "connection['espelho'] && connection['espelho'].status === 'connected'"
+              children:
+                - type: Badge
+                  content: "Online"
+                  color: "#e6f7e9"
+                  textColor: "#1b873b"
+                  style: "margin-right:0.5rem"
+            - type: when
+              when: "connection['espelho'] && connection['espelho'].status !== 'connected'"
+              children:
+                - type: Badge
+                  content: "Offline"
+                  color: "#fff5f5"
+                  textColor: "#dd3333"
+                  style: "margin-right:0.5rem"
+    - type: container
+      class: "chat-history-container"
+      style: "flex:1; overflow-y:auto; padding:1rem; background:#f9f9f9"
+      children:
+        # Welcome message on empty chat
+        - type: when
+          when: "!chat.history || chat.history.length === 0"
+          children:
+            - type: container
+              style: "text-align:center; margin:2rem 0"
+              children:
+                - type: text
+                  content: "👋 Bem-vindo ao FlipApp!"
+                  style: "font-size:1.5rem; font-weight:bold; margin-bottom:1rem"
+                - type: text
+                  content: "Envie uma mensagem para começar a conversa."
+                  style: "color:#666"
+        # Chat history loop
+        - type: loop
+          data: "chat.history"
+          children:
+            - type: ChatMessage
+              sender: "{{item.sender}}"
+              content: "{{item.content}}"
+              timestamp: "{{item.timestamp}}"
+    # Typing indicator
+    - type: when
+      when: "chat.isTyping"
+      children:
+        - type: container
+          style: "padding:0.5rem 1rem; font-style:italic; color:#888"
+          children:
+            - type: text
+              content: "Bot está digitando..."
+              style: "display:inline-block"
+              class: "typing-indicator"
+    # Input area
+    - type: container
+      class: "chat-input"
+      style: "padding:1rem; border-top:1px solid #eee; display:flex; gap:0.5rem"
+      children:
+        - type: input
+          bind: "chat.messageInput | userTypingDebounce"
+          placeholder: "Digite sua mensagem..."
+          style: "flex:1; padding:0.75rem; border:1px solid #ddd; border-radius:4px; font-size:1rem"
+          on: "keypress: inputKeyPress"
+        - type: Button
+          content: "Enviar"
+          variant: "primary"
+          onClick: "sendMessage"
+          disabled: "{{!chat.messageInput || chat.messageInput.trim() === ''}}"
+          style: "background:#1a8cff; color:white"

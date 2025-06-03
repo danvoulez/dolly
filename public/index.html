@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="FlipApp - Plataforma conversacional com UI declarativa e integração WASM">
+  <meta name="theme-color" content="#1a8cff">
+  
+  <!-- Título -->
+  <title>FlipApp</title>
+  
+  <!-- PWA Manifest -->
+  <link rel="manifest" href="/manifest.json">
+  
+  <!-- Ícones -->
+  <link rel="icon" href="/favicon.ico">
+  <link rel="apple-touch-icon" href="/icons/192.png">
+  
+  <!-- Estilos -->
+  <link rel="stylesheet" href="/styles/main.css">
+  
+  <!-- CSP - Content Security Policy -->
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://cdnjs.cloudflare.com https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; connect-src 'self' ws://localhost:8080 ws://localhost:3001 http://localhost:8000 https://api.openai.com; font-src 'self' https:; media-src 'self'; worker-src 'self';">
+  
+  <!-- Preload de recursos críticos -->
+  <link rel="preload" href="/wasm/rust_vm.js" as="script">
+  <link rel="preload" href="/src/main.js" as="script">
+  
+  <!-- Dependências externas -->
+  <script src="https://cdn.jsdelivr.net/npm/dompurify@3.0.6/dist/purify.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/markdown-it@13.0.1/dist/markdown-it.min.js"></script>
+  
+  <!-- Configurações de ambiente -->
+  <script>
+    window.APP_CONFIG = {
+      apiBaseUrl: '{{API_BASE_URL}}' || 'http://localhost:8000/api',
+      whatsappWsUrl: '{{WHATSAPP_WS_URL}}' || 'ws://localhost:3001/ws/messages',
+      espelhoWsUrl: '{{ESPELHO_WS_URL}}' || 'ws://localhost:8080/ws/espelho',
+      llmApiUrl: '{{LLM_API_URL}}' || 'http://localhost:8000/api/llm',
+      environment: '{{NODE_ENV}}' || 'development',
+      version: '1.0.0-production'
+    };
+  </script>
+</head>
+<body>
+  <!-- Notificação Offline -->
+  <div id="offline-banner" class="offline-banner hidden">
+    Você está offline. Alguns recursos podem não estar disponíveis.
+  </div>
+  
+  <!-- Conteúdo principal -->
+  <div id="root">
+    <!-- Loading spinner -->
+    <div class="loading-container">
+      <div class="loading-spinner"></div>
+      <p>Carregando FlipApp...</p>
+    </div>
+  </div>
+  
+  <!-- Módulo WASM -->
+  <script type="module" src="/wasm/rust_vm.js"></script>
+  
+  <!-- Script principal da aplicação (versionado para cache busting) -->
+  <script type="module" src="/src/main.js?v={{BUILD_VERSION}}"></script>
+  
+  <!-- Status de conexão -->
+  <script>
+    window.addEventListener('online', function() {
+      document.getElementById('offline-banner').classList.add('hidden');
+    });
+    
+    window.addEventListener('offline', function() {
+      document.getElementById('offline-banner').classList.remove('hidden');
+    });
+    
+    if (!navigator.onLine) {
+      document.getElementById('offline-banner').classList.remove('hidden');
+    }
+  </script>
+</body>
+</html>
